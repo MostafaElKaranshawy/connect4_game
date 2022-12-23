@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>     // sleep function.
-//handle score in the undo, redo
+#include <time.h>
 
 typedef struct {
     char symbol;
@@ -11,7 +11,6 @@ typedef struct {
     int score;
     int moves ;
     char name[255];
-    int time;
 }players;
 
 players player_1 , player_2 ;
@@ -20,9 +19,9 @@ players player_1 , player_2 ;
 int width =6, height =6;
 int flag ,counter = 0;
 int turn = 0;
-int start = 1;
 int turn2 = 0;
-
+int start , end ;
+int time_passed = 0 , time_min , time_sec;
 void check_colum(int a[][width+3],int i,int j);
 void check_row(int a[][width+3],int i,int j);
 void check_diagonalr(int a[][width+3],int i,int j);
@@ -36,6 +35,7 @@ void undo(int a[][width+3],int i[], int j[]);
 void redo(int a[][width+3],int i[], int j[]);
 void p_players(int qq);
 void new_game();
+void details ();
 
 int main()
 {
@@ -57,8 +57,12 @@ int main()
             a[i][j] = ' ' ;
         }
     }
+    printf("\033[0;35m");
+    printf("\n\n\n\tHello To Connect 4...\n\n\n\t\tPLease Press Enter to start");
+    printf("\033[0m");
     while(1){
         if(getch() == '\r'){
+            system("cls");
             main_menu(a,arri,arrj);
         }
     }
@@ -66,61 +70,54 @@ int main()
 
 }
 void main_menu(int a[][width+3],int arri[],int arrj[]){
-
-    // if(getch() == '\r'){
-        printf("Hello To Connect 4!\n");
-        printf("\nMain Menu\n");
-        printf("\nNew Game 'Press N' \n");
-        printf("\nTop Players 'Press T'\n");
-        printf("\nLoad Game 'Press L' \n");
-        printf("\nQuit Game 'Press Q' \n");
-        fflush(stdin);
-        switch(getch()){
-            case 'n':
-                system("cls");
-                new_game();
-                system("cls");
-                print(a);
-                while(counter < width * height){
-                    input(a,arri,arrj);
-                }
+    printf("\033[0;36m");
+    printf("\nMain Menu\n");
+    printf("\n\tNew Game 'Press N' \n");
+    printf("\n\tTop Players 'Press T'\n");
+    printf("\n\tLoad Game 'Press L' \n");
+    printf("\n\tQuit Game 'Press Q' \n");
+    printf("\033[0m");
+    fflush(stdin);
+    switch(getch()){
+        case 'n':
+            system("cls");
+            new_game();
+            system("cls");
+            print(a);
+            while(counter < width * height){
+                input(a,arri,arrj);
+            }
+            exit(1);
+            break;
+        case 'l':
+            system("cls");
+            printf("Loading File ...\n");
+            break;
+        case 'q':
+            system("cls");
+            printf("\nQuit Game.....!\n");
+            printf("\n\tYes 'y'\tNO 'n'\n");
+            char sure = getch();
+            if(sure == 'y'){
+                printf("BYE.............!");
                 exit(1);
-                break;
-            case 'l':
+            }
+            else if(sure == 'n'){
                 system("cls");
-                printf("Loading File ...\n");
-                break;
-            case 'q':
-                system("cls");
-                printf("Quit Game.....!\n");
-                printf("\nYes 'y'\tNO 'n'\n");
-                char sure = getch();
-                if(sure == 'y'){
-                    printf("BYE.............!");
-                    exit(1);
-                }
-                else if(sure == 'n'){
-                    system("cls");
-                    main_menu(a,arri,arri);
-                    }
-                break;
-            default:
-                system("cls");
-                main_menu(a,arri,arrj);
-                break;
-        }
-    // }
-
+                main_menu(a,arri,arri);
+            }
+            break;
+        default:
+            system("cls");
+            main_menu(a,arri,arrj);
+            break;
+    }
 }
 
 void input(int a[][width+3],int arri[],int arrj[]){
-    // print(a);
+    int start = time(NULL);
     int human=1;
-    printf("\n");
-    printf("\033[0;31mPlayer 1 Moves: %d\033[0m\t\033[0;34m%s Moves: %d\033[0m\n",player_1.moves,player_2.name, player_2.moves);
-    printf("\n\033[0;31mplayer 1 score: %d\033[0m\t\033[0;34mplayer 2 score: %d\033[0m\n ",player_1.score,player_2.score);
-    printf("");
-
+    
     char l;
     int qqq;
     p_players(turn%2+1);
@@ -151,24 +148,26 @@ void input(int a[][width+3],int arri[],int arrj[]){
     if(l=='q' ||l == 'm' || l == 's' || l == 'u'||l == 'd' || (qqq <= width && qqq > 0)){
         gravity(a,l,arri,arrj,human);
     }
-    else if (!(l=='q' ||l == 'm' || l == 's' || l == 'u'||l == 'd' || (qqq <= width && qqq > 0))){
-        system("cls");
-        printf("\n No Available Place Here!\n Try Another Place\n");
-        print(a);
-        input(a,arri,arrj);
-    }
+    // else if (!(l=='q' ||l == 'm' || l == 's' || l == 'u'||l == 'd' || (qqq <= width && qqq > 0))){
+    //     system("cls");
+    //     printf("\n No Available Place Here!\n Try Another Place\n");
+    //     print(a);
+    //     input(a,arri,arrj);
+    // }
 
     system("cls");
+    int end = time(NULL);
+    time_passed+= end - start;
+    time_min = time_passed / 60;
+    time_sec = time_passed % 60;
     print(a);
-    // p_players(turn%2+1);
-
 }
 
 void gravity(int a[][width+3],char qqq,int arri[],int arrj[],int human){
     int f=qqq - '0';
     int arrscore1[width*height],arrscore2[width*height];
     char symbol[2] = {player_1.symbol , player_2.symbol};
-    if(f < width && f >= 0){
+    if(f <= width && f >= 0){
         for(int i =height-1; i>=0; i--){
             if(i == height-1 && a[i][f-1] ==' '){           // first row at the bottom game.
 
@@ -205,12 +204,14 @@ void gravity(int a[][width+3],char qqq,int arri[],int arrj[],int human){
     }
     else if(qqq == 'q'){
         system("cls");
+        printf("\033[0;36m");
         printf("\n\n\nQuit Game.....!\n\n\n");
         printf("\t\tYes 'y'\t\tNO 'n'\n");
+        printf("\033[0m");
         char sure = getch();
         if(sure == 'y'){
             system("cls");
-            printf("\n\n\n\nBYE.............!");
+            printf("\n\n\n\n\033[0;35mBYE.............!\033[0m");
             exit(1);
         }
         else if(sure == 'n'){
@@ -220,15 +221,19 @@ void gravity(int a[][width+3],char qqq,int arri[],int arrj[],int human){
     }
     else if(qqq == 'm'){
         system("cls");
+        printf("\033[0;36m");
         printf("\n\n\nReurn to main menu ?\n\n\n\tYes 'y'\t\tNO 'n'\n");
+        printf("\033[0m");
         char back = getch();
         if(back == 'y'){
+            printf("\033[0;36m");
             printf("\n\n\nreturning to main menu.....\n\n\n");
             sleep(1);
+            printf("\033[0m");
             system("cls");
             main_menu(a,arri,arrj);            
         }
-        if(back == "n"){
+        if(back == 'n'){
             system("cls");
             input(a,arri,arri);
         }
@@ -236,10 +241,12 @@ void gravity(int a[][width+3],char qqq,int arri[],int arrj[],int human){
     }
     else if(qqq == 's'){
         system("cls");
+        printf("\033[0;36m");
         printf("\tSaving Game.....\n");
         sleep(1);
         printf("\n\n\tGame Saved\n");
         sleep(1);
+        printf("\033[0m");
         system("cls");
         input(a,arri,arri);
     }
@@ -251,75 +258,15 @@ void gravity(int a[][width+3],char qqq,int arri[],int arrj[],int human){
     }
 }
 
-void print(int a[][width+3]){
-
-    printf("\n ");
-    for(int s = 0 ;s<width ; s++){
-        printf("----");
-    }
-
-
-    printf("\n");
-    for(int i=0; i<height;i++){
-        for(int j=0;j<width;j++){
-            if( a[i][j] == player_1.symbol){
-                if(j == 0){
-                    // printf("| %c | ",a[i][j]);
-                    printf("| ");
-                    printf("\033[0;31m%c\033[0m",a[i][j]);
-                    printf(" | ");
-
-                }
-                else{
-                    // printf("%c | ",a[i][j]);
-                    printf("\033[0;31m%c\033[0m",a[i][j]);
-                    printf(" | ");
-                }
-            }
-            else if( a[i][j] == player_2.symbol){
-                if(j == 0){
-                    // printf("| %c | ",a[i][j]);
-                    printf("| ");
-                    printf("\033[0;34m%c\033[0m",a[i][j]);
-                    printf(" | ");
-
-                }
-                else{
-                    // printf("%c | ",a[i][j]);
-                    printf("\033[0;34m%c\033[0m",a[i][j]);
-                    printf(" | ");
-                }
-            }
-            else{
-                if(j == 0){
-                    printf("| %c | ",a[i][j]);
-
-                }
-                else{
-                    printf("%c | ",a[i][j]);
-                }
-            }
-
-        }
-        printf("\n ");
-
-        for(int s = 0 ;s<width ; s++){
-            printf("----");
-        }
-        printf("\n");
-    }
-    printf("PRESS 'u' FOR UNDO\t\t\t PRESS 'd' FOR REDO\n");
-
-}
 
 void p_players(int qq){
     if(!(strcmp(player_2.name , "computer"))){
         if(qq == 2){
-            printf("\n\n\t\t\t\033[0mComputer Turn!\033[0m\n\n");
+            printf("\n\n\t\t\t\033[034mComputer Turn!\033[0m\n\n");
             // player_1.moves++;
         }
         else if( qq == 1){
-            printf("\n\n\033[0;31mPlayer [1] Turn!\n\n");
+            printf("\n\n\033[0;31mPlayer [1] Turn!\033[0m\n\n");
             // player_2.moves++;
         }
     }
@@ -334,9 +281,11 @@ void p_players(int qq){
 }
 
 void new_game(){
+    printf("\033[0;36m");
     printf("\nGame Mode:\n");
     printf("\n\t Human VS Human 'Press H'\n");
     printf("\n\t Human VS Computer 'Press C'\n");
+    printf("\033[0m");
     switch(getch()){
         case 'h':
             strcpy(player_2.name , "Player 2");
@@ -521,5 +470,78 @@ void redo(int a[][width+3],int i[], int j[]){
         player_2.moves++;
     }
 }
+void details (){
+    printf("\033[0;36m");
+    printf("Press 'u' for Undo\nPress 'd' for Redo\n");
+    printf("Press 'm' to back to Main Menu\n");
+    printf("Press 's' to save the game\n");
+    printf("Press 'q' to Quit the game\n");
+    printf("\033[0m");
+    printf("\n");
+    printf("\033[0;31mPlayer 1 Moves: %d\033[0m\t\033[0;34m%s Moves: %d\033[0m\n",player_1.moves,player_2.name, player_2.moves);
+    printf("\n\033[0;31mplayer 1 score: %d\033[0m\t\033[0;34m%s score: %d\033[0m\n ",player_1.score,player_2.name,player_2.score);
+}
+
+void print(int a[][width+3]){
+    printf("\n\033[0;32mTime Passed is 00:%.2d:%.2d\033[0m\n",time_min , time_sec);
+
+    printf("\n ");
+    for(int s = 0 ;s<width ; s++){
+        printf("\033[0;33m----\033[0m");
+    }
+
+
+    printf("\n");
+    for(int i=0; i<height;i++){
+        for(int j=0;j<width;j++){
+            if( a[i][j] == player_1.symbol){
+                if(j == 0){
+                    // printf("| %c | ",a[i][j]);
+                    printf("\033[0;33m| \033[0m");
+                    printf("\033[0;31m%c\033[0m",a[i][j]);
+                    printf("\033[0;33m\033[0;33m | \033[0m");
+
+                }
+                else{
+                    // printf("%c | ",a[i][j]);
+                    printf("\033[0;31m%c\033[0m",a[i][j]);
+                    printf("\033[0;33m | \033[0m");
+                }
+            }
+            else if( a[i][j] == player_2.symbol){
+                if(j == 0){
+                    // printf("| %c | ",a[i][j]);
+                    printf("\033[0;33m| \033[0;33m\033[0m");
+                    printf("\033[0;34m%c\033[0m",a[i][j]);
+                    printf("\033[0;33m | \033[0m");
+
+                }
+                else{
+                    // printf("%c | ",a[i][j]);
+                    printf("\033[0;34m%c\033[0m",a[i][j]);
+                    printf("\033[0;33m | \033[0m");
+                }
+            }
+            else{
+                if(j == 0){
+                    printf("\033[0;33m|\033[0m %c \033[0;33m| \033[0m",a[i][j]);
+
+                }
+                else{
+                    printf("%c \033[0;33m| \033[0m",a[i][j]);
+                }
+            }
+
+        }
+        printf("\n ");
+
+        for(int s = 0 ;s<width ; s++){
+            printf("\033[0;33m----\033[0m");
+        }
+        printf("\n");
+    }
+    details ();
+}
+
 void save(){}
 void load(){}
