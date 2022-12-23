@@ -15,7 +15,7 @@ typedef struct {
 
 players player_1 , player_2 ;
 
-
+int max=0;
 int width =16, height =6;
 int flag ,counter = 0;
 int turn = 0;
@@ -50,9 +50,9 @@ int main()
     int a[height+3][width+3];
     int arri[width * height] ,arrj[width * height];
     start_game(a);
-    printf("\033[0;35m");
+   // printf("\033[0;35m");
     printf("\n\n\n\tHello To Connect 4...\n\n\n\t\tPLease Press Enter to start");
-    printf("\033[0m");
+  //  printf("\033[0m");
     while(1){
         if(getch() == '\r'){
             system("cls");
@@ -148,7 +148,7 @@ void input(int a[][width+3],int arri[],int arrj[]){
 void gravity(int a[][width+3],char qqq[], int num1,int arri[],int arrj[]){
     int arrscore1[width*height],arrscore2[width*height];
     char symbol[2] = {player_1.symbol , player_2.symbol};
-    if(num1 <= width && num1 >= 0){
+    if(num1 <= width && num1 > 0){
         for(int i =height-1; i>=0; i--){
             if(i == height-1 && a[i][num1-1] ==' '){           // first row at the bottom game.
 
@@ -161,6 +161,7 @@ void gravity(int a[][width+3],char qqq[], int num1,int arri[],int arrj[]){
                 if(turn%2 == 1){player_2.moves++;}
                 turn++;
                 counter++;
+                max=max_counter(counter);
                 break;
             }
             else if ( a[i][num1-1] ==' ' && a[i+1][num1-1] !=' '){
@@ -172,14 +173,12 @@ void gravity(int a[][width+3],char qqq[], int num1,int arri[],int arrj[]){
                 if(turn%2 == 1){player_2.moves++;}
                 turn++;
                 counter++;
+                max=max_counter(counter);
                 break;
             }
-            else{
-                if(i == 0)
-                {
-                    input(a,arri,arri);
-                    printf("\nThis column is full!\n Try Another Place\n");
-                }
+            else if(i == 0){
+                printf("\nNot available move!\n Try Another Place\n");
+                input(a,arri,arri);
             }
         }
     }
@@ -213,7 +212,7 @@ void gravity(int a[][width+3],char qqq[], int num1,int arri[],int arrj[]){
             sleep(1);
             printf("\033[0m");
             system("cls");
-            main_menu(a,arri,arrj);            
+            main_menu(a,arri,arrj);
         }
         if(back == 'n'){
             system("cls");
@@ -233,10 +232,10 @@ void gravity(int a[][width+3],char qqq[], int num1,int arri[],int arrj[]){
         print(a);
         input(a,arri,arri);
     }
-    else if(!(strcmp(qqq,"u")) && counter < 0){
+    else if(!(strcmp(qqq,"u")) && counter > 0){
         undo(a,arri,arrj);
     }
-    else if(!(strcmp(qqq,"d")) && counter < 0){
+    else if(!(strcmp(qqq,"d")) && counter <max){
         redo(a,arri,arrj);
     }
 }
@@ -272,6 +271,7 @@ void start_game(int a[][width+3]){
     time_passed = 0;
     time_min = 0;
     time_sec = 0;
+    max=0;
     for(int i=0; i<height+3;i++){
         for(int j=0;j<width+3;j++){
             a[i][j] = ' ' ;
@@ -583,6 +583,12 @@ void print(int a[][width+3]){
     }
     details ();
 }
+max_counter(int c){
 
+    if(c>max){
+        max=c;
+    }
+    return(max);
+}
 void save(){}
 void load(){}
