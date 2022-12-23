@@ -16,7 +16,7 @@ typedef struct {
 players player_1 , player_2 ;
 
 int max=0;
-int width =16, height =6;
+int width =6, height =6;
 int flag ,counter = 0;
 int turn = 0;
 int turn2 = 0;
@@ -33,16 +33,18 @@ void gravity(int a[][width+3],char qqq[], int num1,int arri[],int arrj[]);
 void main_menu(int a[][width+3],int arri[],int arrj[]);
 void undo(int a[][width+3],int i[], int j[]);
 void redo(int a[][width+3],int i[], int j[]);
-void p_players(int qq);
+void player_turn(int qq);
 void new_game(int a[][width+3]);
 void details ();
 int casting(char user_input[]);
 void start_game(int a[][width]);
+void winner();
+int max_counter(int c);
+
 
 int main()
 {
     strcpy(player_1.name,"Player 1");
-
     player_1.symbol = 'X';
     player_2.symbol = 'O';
     player_1.score=0;
@@ -50,17 +52,15 @@ int main()
     int a[height+3][width+3];
     int arri[width * height] ,arrj[width * height];
     start_game(a);
-   // printf("\033[0;35m");
+    printf("\033[0;35m");
     printf("\n\n\n\tHello To Connect 4...\n\n\n\t\tPLease Press Enter to start");
-  //  printf("\033[0m");
+    printf("\033[0m");
     while(1){
         if(getch() == '\r'){
             system("cls");
             main_menu(a,arri,arrj);
         }
     }
-
-
 }
 void main_menu(int a[][width+3],int arri[],int arrj[]){
     printf("\033[0;36m");
@@ -80,6 +80,8 @@ void main_menu(int a[][width+3],int arri[],int arrj[]){
             while(counter < width * height){
                 input(a,arri,arrj);
             }
+            winner();
+            sleep(10);
             exit(1);
             break;
         case 'l':
@@ -111,7 +113,7 @@ void input(int a[][width+3],int arri[],int arrj[]){
     int start = time(NULL);
     int qqq;
     char input1[255];
-    p_players(turn%2+1);
+    player_turn(turn%2+1);
     if(!(strcmp(player_2.name,"computer")) && turn%2 == 1){
         qqq = rand() % width ;
         while(!(qqq<= width && qqq > 0)){
@@ -177,6 +179,8 @@ void gravity(int a[][width+3],char qqq[], int num1,int arri[],int arrj[]){
                 break;
             }
             else if(i == 0){
+                system("cls");
+                print(a);
                 printf("\nNot available move!\n Try Another Place\n");
                 input(a,arri,arri);
             }
@@ -212,7 +216,7 @@ void gravity(int a[][width+3],char qqq[], int num1,int arri[],int arrj[]){
             sleep(1);
             printf("\033[0m");
             system("cls");
-            main_menu(a,arri,arrj);
+            main_menu(a,arri,arrj);            
         }
         if(back == 'n'){
             system("cls");
@@ -235,13 +239,13 @@ void gravity(int a[][width+3],char qqq[], int num1,int arri[],int arrj[]){
     else if(!(strcmp(qqq,"u")) && counter > 0){
         undo(a,arri,arrj);
     }
-    else if(!(strcmp(qqq,"d")) && counter <max){
+    else if(!(strcmp(qqq,"d")) &&counter <max){
         redo(a,arri,arrj);
     }
 }
 
 
-void p_players(int qq){
+void player_turn(int qq){
     if(!(strcmp(player_2.name , "computer"))){
         if(qq == 2){
             printf("\n\n\t\t\t\033[034mComputer Turn!\033[0m\n\n");
@@ -271,7 +275,6 @@ void start_game(int a[][width+3]){
     time_passed = 0;
     time_min = 0;
     time_sec = 0;
-    max=0;
     for(int i=0; i<height+3;i++){
         for(int j=0;j<width+3;j++){
             a[i][j] = ' ' ;
@@ -309,106 +312,106 @@ void check_colum(int a[][width+3],int i,int j){
     }
 }
 void check_row(int a[][width+3],int i,int j){
-if(a[i][j]==a[i][j+1]&&a[i][j+1]==a[i][j+2]&&a[i][j+2]==a[i][j+3]){
-   if(a[i][j]==player_1.symbol){
-             player_1.score++;
-        }
-        else if(a[i][j]==player_2.symbol){
-             player_2.score++;
-        }
-}
-if(a[i][j]==a[i][j-1]&&a[i][j-1]==a[i][j-2]&&a[i][j-2]==a[i][j-3]){
-     if(a[i][j]==player_1.symbol){
-             player_1.score++;
-        }
-        else if(a[i][j]==player_2.symbol){
-             player_2.score++;
-        }
-}
-if(a[i][j]==a[i][j+1]&&a[i][j+1]==a[i][j+2]&&a[i][j]==a[i][j-1]){
-     if(a[i][j]==player_1.symbol){
-             player_1.score++;
-        }
-        else if(a[i][j]==player_2.symbol){
-             player_2.score++;
-        }
-}
-if(a[i][j]==a[i][j-1]&&a[i][j-1]==a[i][j-2]&&a[i][j]==a[i][j+1])
-if(a[i][j]==player_1.symbol){
-             player_1.score++;
-        }
-        else if(a[i][j]==player_2.symbol){
-             player_2.score++;
-        }
+    if(a[i][j]==a[i][j+1]&&a[i][j+1]==a[i][j+2]&&a[i][j+2]==a[i][j+3]){
+    if(a[i][j]==player_1.symbol){
+                player_1.score++;
+            }
+            else if(a[i][j]==player_2.symbol){
+                player_2.score++;
+            }
+    }
+    if(a[i][j]==a[i][j-1]&&a[i][j-1]==a[i][j-2]&&a[i][j-2]==a[i][j-3]){
+        if(a[i][j]==player_1.symbol){
+                player_1.score++;
+            }
+            else if(a[i][j]==player_2.symbol){
+                player_2.score++;
+            }
+    }
+    if(a[i][j]==a[i][j+1]&&a[i][j+1]==a[i][j+2]&&a[i][j]==a[i][j-1]){
+        if(a[i][j]==player_1.symbol){
+                player_1.score++;
+            }
+            else if(a[i][j]==player_2.symbol){
+                player_2.score++;
+            }
+    }
+    if(a[i][j]==a[i][j-1]&&a[i][j-1]==a[i][j-2]&&a[i][j]==a[i][j+1])
+        if(a[i][j]==player_1.symbol){
+                player_1.score++;
+            }
+            else if(a[i][j]==player_2.symbol){
+                player_2.score++;
+            }
 }
 
 void check_diagonalr(int a[][width+3],int i,int j){
-if(a[i][j]==a[i+1][j+1]&&a[i+1][j+1]==a[i+2][j+2]&&a[i+2][j+2]==a[i+3][j+3]){
-   if(a[i][j]==player_1.symbol){
-             player_1.score++;
-        }
-        else if(a[i][j]==player_2.symbol){
-             player_2.score++;
-        }
-}
-if(a[i][j]==a[i-1][j-1]&&a[i-1][j-1]==a[i-2][j-2]&&a[i-2][j-2]==a[i-3][j-3]){
-     if(a[i][j]==player_1.symbol){
-             player_1.score++;
-        }
-        else if(a[i][j]==player_2.symbol){
-             player_2.score++;
-        }
-}
-if(a[i][j]==a[i+1][j+1]&&a[i+1][j+1]==a[i+2][j+2]&&a[i-1][j-1]==a[i][j]){
-     if(a[i][j]==player_1.symbol){
-            player_1.score++;
-        }
-        else if(a[i][j]==player_2.symbol){
-             player_2.score++;
-        }
-}
-if(a[i][j]==a[i-1][j-1]&&a[i-1][j-1]==a[i-2][j-2]&&a[i][j]==a[i+1][j+1])
-if(a[i][j]==player_1.symbol){
-             player_1.score++;
-        }
-        else if(a[i][j]==player_2.symbol){
-             player_2.score++;
-        }
+    if(a[i][j]==a[i+1][j+1]&&a[i+1][j+1]==a[i+2][j+2]&&a[i+2][j+2]==a[i+3][j+3]){
+        if(a[i][j]==player_1.symbol){
+                player_1.score++;
+            }
+            else if(a[i][j]==player_2.symbol){
+                player_2.score++;
+            }
+    }
+    if(a[i][j]==a[i-1][j-1]&&a[i-1][j-1]==a[i-2][j-2]&&a[i-2][j-2]==a[i-3][j-3]){
+        if(a[i][j]==player_1.symbol){
+                player_1.score++;
+            }
+            else if(a[i][j]==player_2.symbol){
+                player_2.score++;
+            }
+    }
+    if(a[i][j]==a[i+1][j+1]&&a[i+1][j+1]==a[i+2][j+2]&&a[i-1][j-1]==a[i][j]){
+        if(a[i][j]==player_1.symbol){
+                player_1.score++;
+            }
+            else if(a[i][j]==player_2.symbol){
+                player_2.score++;
+            }
+    }
+    if(a[i][j]==a[i-1][j-1]&&a[i-1][j-1]==a[i-2][j-2]&&a[i][j]==a[i+1][j+1])
+        if(a[i][j]==player_1.symbol){
+                player_1.score++;
+            }
+            else if(a[i][j]==player_2.symbol){
+                player_2.score++;
+            }
 }
 
 
 void check_diagnall(int a[][width+3],int i,int j){
-if(a[i][j]==a[i-1][j+1]&&a[i-1][j+1]==a[i-2][j+2]&&a[i-2][j+2]==a[i-3][j+3]){
-   if(a[i][j]==player_1.symbol){
-             player_1.score++;
-        }
-        else if(a[i][j]==player_2.symbol){
-            player_2.score++;
-        }
-}
-if(a[i][j]==a[i+1][j-1]&&a[i+1][j-1]==a[i+2][j-2]&&a[i+2][j-2]==a[i+3][j-3]){
-     if(a[i][j]==player_1.symbol){
-             player_1.score++;
-        }
-        else if(a[i][j]==player_2.symbol){
-            player_2.score++;
-        }
-}
-if(a[i][j]==a[i-1][j+1]&&a[i][j]==a[i+1][j-1]&&a[i+1][j-1]==a[i+2][j-2]){
-     if(a[i][j]==player_1.symbol){
-             player_1.score++;
-        }
-        else if(a[i][j]==player_2.symbol){
-            player_2.score++;
-        }
-}
-if(a[i][j]==a[i+1][j-1]&&a[i][j]==a[i-1][j+1]&&a[i-1][j+1]==a[i-2][j+2])
-if(a[i][j]==player_1.symbol){
-             player_1.score++;
-        }
-        else if(a[i][j]==player_2.symbol){
-            player_2.score++;
-        }
+    if(a[i][j]==a[i-1][j+1]&&a[i-1][j+1]==a[i-2][j+2]&&a[i-2][j+2]==a[i-3][j+3]){
+        if(a[i][j]==player_1.symbol){
+                player_1.score++;
+            }
+            else if(a[i][j]==player_2.symbol){
+                player_2.score++;
+            }
+    }
+    if(a[i][j]==a[i+1][j-1]&&a[i+1][j-1]==a[i+2][j-2]&&a[i+2][j-2]==a[i+3][j-3]){
+        if(a[i][j]==player_1.symbol){
+                player_1.score++;
+            }
+            else if(a[i][j]==player_2.symbol){
+                player_2.score++;
+            }
+    }
+    if(a[i][j]==a[i-1][j+1]&&a[i][j]==a[i+1][j-1]&&a[i+1][j-1]==a[i+2][j-2]){
+        if(a[i][j]==player_1.symbol){
+                player_1.score++;
+            }
+            else if(a[i][j]==player_2.symbol){
+                player_2.score++;
+            }
+    }
+    if(a[i][j]==a[i+1][j-1]&&a[i][j]==a[i-1][j+1]&&a[i-1][j+1]==a[i-2][j+2])
+        if(a[i][j]==player_1.symbol){
+                player_1.score++;
+            }
+            else if(a[i][j]==player_2.symbol){
+                player_2.score++;
+            }
 }
 
 
@@ -583,7 +586,30 @@ void print(int a[][width+3]){
     }
     details ();
 }
-max_counter(int c){
+void winner(){
+    char winner_player[255];
+    if (player_1.score > player_2.score)
+    {   
+        printf("\n\033[0;31mPlayer 1 \033[0m,\033[0;36m\tYou are the WINNER \n\tPLease enter your name :  ");
+        scanf("%s",winner_player);
+        printf("\t\t\n\n%s is the winner !!\n\n", winner_player);
+        printf("\n\n\t\tCongratulations %s...!!!%c" ,winner_player ,7);
+        printf("\033[0m");
+    }
+    if (player_2.score > player_1.score)
+    {   
+        printf("\n\033[0;34mPlayer 2 \033[0m,\033[0;36m\tYou are the WINNER \n\tPLease enter your name :  ");
+        scanf("%s",winner_player);
+        printf("\t\t\n\n%s is the winner !!\n\n", winner_player);
+        printf("\n\n\t\tCongratulations %s...!!!%c" ,winner_player ,7);
+        printf("\033[0m");
+    }
+    else{
+        printf("\nIT'S DRAW !!!");
+        printf("\n\nCongratulations to both players.......!");
+    }
+}
+int max_counter(int c){
 
     if(c>max){
         max=c;
