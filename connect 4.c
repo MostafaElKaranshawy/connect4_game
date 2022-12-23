@@ -22,24 +22,23 @@ int turn = 0;
 int turn2 = 0;
 int start , end ;
 int time_passed = 0 , time_min , time_sec;
-void check_colum(int a[][width+3],int i,int j);
-void check_row(int a[][width+3],int i,int j);
-void check_diagonalr(int a[][width+3],int i,int j);
-void check_diagonall(int a[][width+3],int i,int j);
-void check_total(int a[][width],int i,int j);
-void input(int a[][width+3],int arri[],int arrj[]);
-void print(int a[][width+3]);
-void gravity(int a[][width+3],char qqq,int arri[],int arrj[],int human);
+// void check_colum(int a[][width+3],int i,int j);
+// void check_row(int a[][width+3],int i,int j);
+// void check_diagonalr(int a[][width+3],int i,int j);
+// void check_diagonall(int a[][width+3],int i,int j);
+// void check_total(int a[][width],int i,int j);
+// void input(int a[][width+3],int arri[],int arrj[]);
+// void print(int a[][width+3]);
+// void gravity(int a[][width+3],char qqq,int arri[],int arrj[],int human);
 void main_menu(int a[][width+3],int arri[],int arrj[]);
-void undo(int a[][width+3],int i[], int j[]);
-void redo(int a[][width+3],int i[], int j[]);
-void p_players(int qq);
-void new_game();
-void details ();
+// void undo(int a[][width+3],int i[], int j[]);
+// void redo(int a[][width+3],int i[], int j[]);
+// void p_players(int qq);
+// void new_game();
+// void details ();
 
 int main()
 {
-
     strcpy(player_1.name,"Player 1");
     player_1.moves = 0 ;
     player_2.moves = 0 ;
@@ -145,7 +144,7 @@ void input(int a[][width+3],int arri[],int arrj[]){
     // if(l=='u'||l=='d'){
     //     gravity(a,l,arri,arrj,human);
     // }
-    if(l=='q' ||l == 'm' || l == 's' || l == 'u'||l == 'd' || (qqq <= width && qqq > 0)){
+    if(l=='q' ||l == 'm' || l == 's' || l == 'u'||l == 'd' || (qqq <= width && qqq >= 0)){
         gravity(a,l,arri,arrj,human);
     }
     // else if (!(l=='q' ||l == 'm' || l == 's' || l == 'u'||l == 'd' || (qqq <= width && qqq > 0))){
@@ -193,11 +192,11 @@ void gravity(int a[][width+3],char qqq,int arri[],int arrj[],int human){
                 counter++;
                 break;
             }
-            else {
-                if (i == 0)
+            else{
+                if(i == 0)
                 {
                     input(a,arri,arri);
-                    printf("\nNo Available Place Here!\n Try Another Place\n");
+                    printf("\nThis column is full!\n Try Another Place\n");
                 }
             }
         }
