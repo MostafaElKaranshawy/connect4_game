@@ -90,8 +90,10 @@ void main_menu(int a[][width+3],int arri[],int arrj[]){
             break;
         case 'q':
             system("cls");
+            printf("\033[0;36m");
             printf("\nQuit Game.....!\n");
             printf("\n\tYes 'y'\tNO 'n'\n");
+            printf("\033[0m");
             char sure = getch();
             if(sure == 'y'){
                 printf("BYE.............!");
@@ -202,7 +204,7 @@ void gravity(int a[][width+3],char qqq[], int num1,int arri[],int arrj[]){
             system("cls");
             print(a);
             input(a,arri,arri);
-            }
+        }
     }
     else if(!(strcmp(qqq,"m"))){
         system("cls");
@@ -220,6 +222,7 @@ void gravity(int a[][width+3],char qqq[], int num1,int arri[],int arrj[]){
         }
         if(back == 'n'){
             system("cls");
+            print(a);
             input(a,arri,arri);
         }
 
