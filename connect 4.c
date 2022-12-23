@@ -34,29 +34,22 @@ void main_menu(int a[][width+3],int arri[],int arrj[]);
 void undo(int a[][width+3],int i[], int j[]);
 void redo(int a[][width+3],int i[], int j[]);
 void p_players(int qq);
-void new_game();
+void new_game(int a[][width+3]);
 void details ();
 int casting(char user_input[]);
+void start_game(int a[][width]);
 
 int main()
 {
     strcpy(player_1.name,"Player 1");
-    player_1.moves = 0 ;
-    player_2.moves = 0 ;
+
     player_1.symbol = 'X';
-    // player_1.color = 'Red';
     player_2.symbol = 'O';
-    // player_2.color = 'Blue';
     player_1.score=0;
     player_2.score=0;
-
     int a[height+3][width+3];
-    int arri[width*height],arrj[width*height];
-    for(int i=0; i<height+3;i++){
-        for(int j=0;j<width+3;j++){
-            a[i][j] = ' ' ;
-        }
-    }
+    int arri[width * height] ,arrj[width * height];
+    start_game(a);
     printf("\033[0;35m");
     printf("\n\n\n\tHello To Connect 4...\n\n\n\t\tPLease Press Enter to start");
     printf("\033[0m");
@@ -81,7 +74,7 @@ void main_menu(int a[][width+3],int arri[],int arrj[]){
     switch(getch()){
         case 'n':
             system("cls");
-            new_game();
+            new_game(a);
             system("cls");
             print(a);
             while(counter < width * height){
@@ -116,7 +109,6 @@ void main_menu(int a[][width+3],int arri[],int arrj[]){
 
 void input(int a[][width+3],int arri[],int arrj[]){
     int start = time(NULL);
-    // char l;
     int qqq;
     char input1[255];
     p_players(turn%2+1);
@@ -139,19 +131,11 @@ void input(int a[][width+3],int arri[],int arrj[]){
         printf("\n");
         qqq= casting(input1);
     }
-    // l = input1[0];
-    // if(l=='u'||l=='d'){
-    //     gravity(a,l,arri,arrj,human);
-    // }
+
     if(!(strcmp(input1,"q")) ||!(strcmp(input1,"m")) || !(strcmp(input1,"s")) || !(strcmp(input1,"u"))||!(strcmp(input1,"d")) || (qqq <= width && qqq >= 0)){
         gravity(a,input1,qqq,arri,arrj);
     }
-    // else if (!(l=='q' ||l == 'm' || l == 's' || l == 'u'||l == 'd' || (qqq <= width && qqq > 0))){
-    //     system("cls");
-    //     printf("\n No Available Place Here!\n Try Another Place\n");
-    //     print(a);
-    //     input(a,arri,arrj);
-    // }
+
 
     system("cls");
     int end = time(NULL);
@@ -279,7 +263,23 @@ void p_players(int qq){
     }
 }
 
-void new_game(){
+void start_game(int a[][width+3]){
+    player_1.moves = 0 ;
+    player_2.moves = 0 ;
+    player_1.score=0;
+    player_2.score=0;
+    counter = 0;
+    time_passed = 0;
+    time_min = 0;
+    time_sec = 0;
+    for(int i=0; i<height+3;i++){
+        for(int j=0;j<width+3;j++){
+            a[i][j] = ' ' ;
+        }
+    }
+}
+void new_game(int a[][width+3]){
+    start_game(a);
     printf("\033[0;36m");
     printf("\nGame Mode:\n");
     printf("\n\t Human VS Human 'Press H'\n");
@@ -294,7 +294,7 @@ void new_game(){
             break;
         default:
             system("cls");
-            new_game();
+            new_game(a);
             break;
     }
 }
