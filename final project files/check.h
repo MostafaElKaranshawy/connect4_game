@@ -1,4 +1,4 @@
-#include "undo.h"
+#include "load_save.h"
 
 void check_colum(int a[][width+3],int i,int j);
 void check_row(int a[][width+3],int i,int j);
