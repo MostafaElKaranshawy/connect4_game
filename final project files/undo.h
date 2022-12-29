@@ -1,12 +1,8 @@
 #include "players_struct.h"
-#include "configuration.h"
+#include "top_scores.h"
 
-int bolean=0;
-int counter = 0;
-int turn = 0;
-
+int base=0;
 void print(int a[][width+3]);
-
 void undo(int a[][width+3],int i[], int j[],int scoret[],int score2[]){
     int h,k,y,z;
     h=i[counter-1];
@@ -15,35 +11,35 @@ void undo(int a[][width+3],int i[], int j[],int scoret[],int score2[]){
     z=j[counter-2];
     if(!(strcmp(player_2.name,"Player 2"))){
         a[h][y]=' ';
-     if(turn%2 == 1){player_1.score=scoret[counter-2];
-     if(counter==0||counter==1){
-        player_1.score=0;
-                           }
-     }
-          if(turn%2==0){player_2.score=score2[counter-2];
-        if(counter==0||counter==1){
-        player_2.score=0;
-     }
-          }
-        print(a);
-        counter--;
-        turn--;
-        if(turn%2 == 0){player_1.moves--;}
-        else if(turn%2 == 1){player_2.moves--;}
+        if(turn%2 == 1){player_1.score=scoret[counter-2];
+            if(counter==base||counter==base+1){
+                player_1.score=savess.score[0];
+            }
+        }
+        if(turn%2==0){
+            player_2.score=score2[counter-2];
+            if(counter==base||counter==base+1){
+                player_2.score=savess.score[1];
+            }
+        }
+            print(a);
+            counter--;
+            turn--;
+            if(turn%2 == 0){player_1.moves--;}
+            else if(turn%2 == 1){player_2.moves--;}
 
-               }
+        }
     else if(!(strcmp(player_2.name,"computer"))){
         a[h][y]=' ';
         a[k][z]=' ';
         print(a);
         player_1.score=scoret[counter-3];
         player_2.score=score2[counter-2];
-        if(counter<=3){
-        player_1.score=0;
-        player_2.score=0;
-     }
+        if(counter<=3+base){
+            player_1.score=0;
+            player_2.score=0;
+        }
         counter=counter-2;
-
         turn=turn-2;
         player_2.moves--;
         player_1.moves--;
