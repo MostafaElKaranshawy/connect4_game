@@ -5,7 +5,7 @@
 int bolean=0;
 int counter = 0;
 int turn = 0;
-int time_passed = 0 , time_min , time_sec;
+int time_passed , time_min , time_sec;
 
 
 typedef struct {
@@ -28,10 +28,10 @@ void configuration_func(){
 
     char path[2048];
     strcpy(path ,"configuration.xml");
-    
+
     // Open XML file to read
     fp = fopen(path, "r");
-    
+
     if ( fp == NULL ){
         while(count_path_access < 3){
             printf("Can't open the XML file\n\nPlease Enter File Path : ");
