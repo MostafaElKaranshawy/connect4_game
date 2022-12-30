@@ -11,7 +11,7 @@ int max=0;
 
 // declaration of Functions
 void input(int a[][width+3],int arri[],int arrj[],int scoret[],int score2[]);
-void gravity(int a[][width+3],char qqq[], int num1,int arri[],int arrj[],int scoret[],int score2[]);
+void game_action(int a[][width+3],char qqq[], int num1,int arri[],int arrj[],int scoret[],int score2[]);
 void player_turn(int qq);
 void new_game(int a[][width+3]);
 void details ();
@@ -21,20 +21,30 @@ int max_counter(int c);
 
 // Main Function
 int main()
-{
+{   
+    // take parameters from Configuration file (.XML)
     configuration_func();
     system("cls");
     strcpy(player_1.name,"Player 1");
+
+    // PLayers informations
     player_1.symbol = 'X';
     player_2.symbol = 'O';
     player_1.score=0;
     player_2.score=0;
+
+    // grid array of playing 
     int a[height+3][width+3];
+
+    // Save,load,undo,redo arrays .
     int arri[width * height] ,arrj[width * height],Scoret[width*height],score2[width*height];
+    // Start the game.
     start_game(a);
     printf("\033[0;35m");
     printf("\n\n\n\tHello To Connect 4...\n\n\n\t\t%cPLease Press Enter to start",251);
     printf("\033[0m");
+
+    // game loop.
     while(1){
         if(getch() == '\r'){
             system("cls");
@@ -42,6 +52,7 @@ int main()
         }
     }
 }
+
 // main menu function for choosing mode of playing.
 void main_menu(int a[][width+3],int arri[],int arrj[],int scoret[],int score2[]){
     printf("\033[0;36m");
@@ -53,6 +64,7 @@ void main_menu(int a[][width+3],int arri[],int arrj[],int scoret[],int score2[])
     printf("\033[0m");
     fflush(stdin);
     switch(getch()){
+        // new game mode
         case 'n':
         case 'N':
             system("cls");
@@ -66,6 +78,7 @@ void main_menu(int a[][width+3],int arri[],int arrj[],int scoret[],int score2[])
 
             exit(1);
             break;
+        // load game mode.
         case 'l':
         case 'L':
             system("cls");
@@ -82,6 +95,7 @@ void main_menu(int a[][width+3],int arri[],int arrj[],int scoret[],int score2[])
             winner(a,arri,arrj,scoret,score2);
             exit(5);
             break;
+        // Quit game mode
         case 'q':
         case 'Q':
             system("cls");
@@ -96,17 +110,18 @@ void main_menu(int a[][width+3],int arri[],int arrj[],int scoret[],int score2[])
             }
             else if(sure == 'n'){
                 system("cls");
-                main_menu(a,arri,arri,scoret,score2);
+                main_menu(a,arri,arrj,scoret,score2);
             }
             break;
+        // Top players list
         case 't':
         case 'T':
             system("cls");
-            print_scores(configuration_elements.highscores);
+            print_scores(configuration_elements.highscores , 1 , "Any name");
             printf("\nPress any key to return to main menu...\n");
             if( getch()){
                 system("cls");
-                main_menu(a,arri,arri,scoret,score2);
+                main_menu(a,arri,arrj,scoret,score2);
             }
             break;
         default:
@@ -116,12 +131,13 @@ void main_menu(int a[][width+3],int arri[],int arrj[],int scoret[],int score2[])
             break;
     }
 }
-
+// user input
 void input(int a[][width+3],int arri[],int arrj[],int scoret[],int score2[]){
     int start = time(NULL);
     int qqq;
     char input1[255];
     player_turn(turn%2+1);
+    // computer Mooves
     if(!(strcmp(player_2.name,"computer")) && turn%2 == 1){
         srand(time(NULL));
         qqq = rand() % (width+1) ;
@@ -130,16 +146,18 @@ void input(int a[][width+3],int arri[],int arrj[],int scoret[],int score2[]){
         }
         sleep(1);
     }
+    // human moves.
     else if(!(strcmp(player_2.name,"Player 2")) || (!(strcmp(player_2.name,"computer")) && turn%2 == 0)){
         printf("\nEnter your move: ");
         gets(input1);
         printf("\n");
         qqq= casting(input1);
     }
-
-    if(!(strcmp(input1,"q")) ||!(strcmp(input1,"m")) || !(strcmp(input1,"s")) || !(strcmp(input1,"u"))||!(strcmp(input1,"d")) || (qqq <= width && qqq >= 0)){
-        gravity(a,input1,qqq,arri,arrj,scoret,score2);
+    // take action according to the input
+    if(!(strcmp(input1,"q")) ||!(strcmp(input1,"m")) || !(strcmp(input1,"s")) || !(strcmp(input1,"u"))||!(strcmp(input1,"d")) || (qqq <= width && qqq > 0)){
+        game_action(a,input1,qqq,arri,arrj,scoret,score2);
     }
+    // non-valid input error
     else{
         system("cls");
         print(a);
@@ -148,17 +166,18 @@ void input(int a[][width+3],int arri[],int arrj[],int scoret[],int score2[]){
     }
     system("cls");
     int end = time(NULL);
+    // time declaration
     time_passed+= end - start;
     time_min = time_passed / 60;
     time_sec = time_passed % 60;
     print(a);
 }
-
-void gravity(int a[][width+3],char qqq[], int num1,int arri[],int arrj[],int scoret[],int score2[]){
+// action function "takes the input and make its action"
+void game_action(int a[][width+3],char qqq[], int num1,int arri[],int arrj[],int scoret[],int score2[]){
     int arrscore1[width*height],arrscore2[width*height];
     char symbol[2] = {player_1.symbol , player_2.symbol};
+    // input in the borders of the grid
     if(num1 <= width && num1 > 0){
-
         for(int i =height-1; i>=0; i--){
             if (( a[i][num1-1] ==' ' && a[i+1][num1-1] !=' ') || (i == height-1 && a[i][num1-1] ==' ')){
                 a[i][num1-1] = symbol[turn%2] ;
@@ -175,6 +194,7 @@ void gravity(int a[][width+3],char qqq[], int num1,int arri[],int arrj[],int sco
                 max=max_counter(counter);
                 break;
             }
+            // if the column is full.
             else if(i == 0){
                 system("cls");
                 print(a);
@@ -185,6 +205,7 @@ void gravity(int a[][width+3],char qqq[], int num1,int arri[],int arrj[],int sco
             }
         }
     }
+    // quit action
     else if(!(strcmp(qqq,"q"))){
         system("cls");
         printf("\033[0;36m\n\n\nQuit Game.....!\n\n\n\t%cYes 'y'\t\t%cNO 'n'\n\033[0m",248,248);
@@ -200,6 +221,7 @@ void gravity(int a[][width+3],char qqq[], int num1,int arri[],int arrj[],int sco
             input(a,arri,arrj,scoret,score2);
         }
     }
+    // main menu action
     else if(!(strcmp(qqq,"m"))){
         system("cls");
         printf("\033[0;36m\n\n\nReurn to main menu ?\n\n\n\t%cYes 'y'\t\t%cNO 'n'\n\033[0m",248,248);
@@ -217,6 +239,7 @@ void gravity(int a[][width+3],char qqq[], int num1,int arri[],int arrj[],int sco
         }
 
     }
+    // save action
     else if(!(strcmp(qqq,"s"))){
         system("cls");
         printf("\033[0;36m\tSaving Game.....\n");
@@ -229,15 +252,17 @@ void gravity(int a[][width+3],char qqq[], int num1,int arri[],int arrj[],int sco
         print(a);
         input(a,arri,arrj,scoret,score2);
     }
+    // undo action
     else if(!(strcmp(qqq,"u")) && counter > base){
         undo(a,arri,arrj,scoret,score2);
     }
+    // redo action
     else if(!(strcmp(qqq,"d")) &&counter <max&&bolean){
         redo(a,arri,arrj,scoret,score2);
     }
 }
 
-
+// Players take turns 
 void player_turn(int qq){
     if(!(strcmp(player_2.name , "computer"))){
         if(qq == 2){
@@ -256,10 +281,11 @@ void player_turn(int qq){
         }
     }
 }
-
+// game menu
 void details (){
     printf("\033[0;36m");
     printf("%cPress 'u' for Undo\n%cPress 'd' for Redo\n",248,248);
+    printf("%cPress 's' for save game\n",248);
     printf("%cPress 'm' to back to Main Menu\n",248);
     printf("%cPress 'q' to Quit the game\n",248);
     printf("\033[0m");
@@ -267,7 +293,7 @@ void details (){
     printf("\033[0;31mPlayer 1 Moves: %d\033[0m\t\033[0;34m%s Moves: %d\033[0m\n",player_1.moves,player_2.name, player_2.moves);
     printf("\n\033[0;31mplayer 1 score: %d\033[0m\t\033[0;34m%s score: %d\033[0m\n ",player_1.score,player_2.name,player_2.score);
 }
-
+// game print function
 void print(int a[][width+3]){
     printf("\n\033[0;32mTime Passed is 00:%.2d:%.2d\033[0m\n",time_min , time_sec);
 
@@ -322,6 +348,7 @@ void print(int a[][width+3]){
     }
     details ();
 }
+// winning actions
 void winner(int a[][width+3],int arri[],int arrj[],int scoret[],int score2[]){
     char winner_player[255];
     int winner_points ;
@@ -335,9 +362,11 @@ void winner(int a[][width+3],int arri[],int arrj[],int scoret[],int score2[]){
             winner_points = player_2.score;
             printf("\n\033[0;34mPlayer 2 \033[0m,\033[0;36mYou are the WINNER \n\tPLease enter your name :  ");
         }
-        scanf("%s",winner_player);
+        // take the winner name
+        gets(winner_player);
         printf("\n\n %s is the winner !!\n\n", winner_player);
         printf("\n\n Congratulations %s...!!!%c" ,winner_player ,7);
+        printf("\nYour score is %d.\n", winner_points);
         printf("\033[0m");
         toprankk(winner_player, winner_points);
     }
@@ -349,9 +378,14 @@ void winner(int a[][width+3],int arri[],int arrj[],int scoret[],int score2[]){
         printf("\nIT'S DRAW !!!");
         printf("\n\nCongratulations to both players.......!");
     }
-    print_scores(configuration_elements.highscores);
-    printf("\n\nReturn to main menu 'm' or exit 'q'\n");
+    // print the winner rank
+    print_scores(configuration_elements.highscores , 0 , winner_player);
+    // print the top players list
+    print_scores(configuration_elements.highscores , 1 , winner_player);
+    // end of the game
+    printf("\n\nReturn to main menu 'm' or exit 'press any key'\n");
     switch(getch()){
+        // returning to the main menu
         case 'm':
             system("cls");
             printf("\nReturning to main menu....");
@@ -359,13 +393,15 @@ void winner(int a[][width+3],int arri[],int arrj[],int scoret[],int score2[]){
             system("cls");
             main_menu(a,arri,arrj,scoret,score2);
             break;
-        case 'q':
+        // quit the game
+        default:
             system("cls");
             printf("Exiting the game .....");
             sleep(1);
             exit(4);
     }
 }
+// game counter updating
 int max_counter(int c){
 
     if(c>max){

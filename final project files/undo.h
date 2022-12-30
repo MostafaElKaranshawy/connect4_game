@@ -1,6 +1,18 @@
 #include "players_struct.h"
 #include "top_scores.h"
 
+typedef struct{
+    int a1[2000][2000];
+    int counting;
+    int seconds;
+    int score[2];
+    int moves[2];
+    char name[20];
+    int countep;
+
+}save_game;
+save_game savess;
+
 int base=0;
 void print(int a[][width+3]);
 void undo(int a[][width+3],int i[], int j[],int scoret[],int score2[]){

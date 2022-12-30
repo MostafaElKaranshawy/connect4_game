@@ -2,7 +2,7 @@
 
 void start_game(int a[][width+3]){
     player_1.moves = 0 ,player_1.score=0  , player_2.moves = 0 ,player_2.score=0;
-    counter = 0 , bolean=0;
+    counter = 0 , bolean=0 , turn = 0;
     time_passed = 0 , time_min = 0 , time_sec = 0;
     for(int i=0; i<height+3;i++){
         for(int j=0;j<width+3;j++){

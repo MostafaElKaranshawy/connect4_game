@@ -1,3 +1,4 @@
+// casting the input into number.
 int casting(char user_input[]){
     int boool = 1;
     int qqq =0;

@@ -1,5 +1,5 @@
 #include "New_game.h"
-
+// top scores information
 typedef struct{
     char check_name[1000][20];
     char winner_name[1000][20];
@@ -9,15 +9,17 @@ typedef struct{
 top_rank rank;
 int index_score;
 
+// func declaration.
 void write_toprank();
 void toprankk(char nume[],int player_score );
-void print_scores(int n_players);
+void print_scores(int n_players , int true , char winner_name[]);
 void swap_arr(int i,int j);
 int partition(int array[],int low,int high);
 void quick_sort(int array[],int low,int high);
 int check_check_name(char num[],int s);
 void read_top();
 
+// take the name of the winner and his score.
 void toprankk(char nume[],int player_score ){
     int paramter= configuration_elements.highscores;
     int l;
@@ -39,20 +41,23 @@ void toprankk(char nume[],int player_score ){
     }
     quick_sort(rank.winner_score,0,rank.names_counter);
     write_toprank();
-
 }
+
+// read the list
 void read_top(){
     FILE *fp;
     fp=fopen("topranking","rb");
     fread(&rank,sizeof(rank),1,fp);
     fclose(fp);
 }
+// change the lisst
 void write_toprank(){
     FILE *fp;
     fp=fopen("topranking","wb");
     fwrite(&rank,sizeof(rank),1,fp);
     fclose(fp);
 }
+// check if the player is already exist or not
 int check_check_name(char num[],int s){
     int notfound=1;
     char sa[20];
@@ -71,6 +76,7 @@ int check_check_name(char num[],int s){
     }
     return(notfound);
 }
+// sort the list
 void quick_sort(int array[],int low,int high){
     if(low<high){
         int pivot=partition(array,low,high);
@@ -78,6 +84,7 @@ void quick_sort(int array[],int low,int high){
         quick_sort(array,pivot+1,high);
     }
 }
+// take the pivot for quick sort
 int partition(int array[],int low,int high){
     int pivot=array[high];
     int leftpointer=low-1;
@@ -89,7 +96,7 @@ int partition(int array[],int low,int high){
     swap_arr(++leftpointer,high);
     return(leftpointer);
 }
-
+// swapping the players to sort them.
 void swap_arr(int i,int j){
     int tempc;
     char tempn[20],tempnv[20];
@@ -103,17 +110,27 @@ void swap_arr(int i,int j){
     strcpy(rank.winner_name[j],rank.winner_name[i]);
     strcpy(rank.winner_name[i],tempnv);
 }
-void print_scores(int n_players){
+// print the top n players
+void print_scores(int n_players , int true , char winner_name[]){
     int print_players=n_players;
     read_top();
     if(n_players>rank.names_counter){
-        print_players=rank.names_counter+1;
+        print_players=rank.names_counter;
     }
-    printf("\033[0;36m");
-    printf("\nTOP PLAYERS\n");
-    printf("\n\nPlayer name\tPlayer score\n");
-    for(int i=0;i<print_players-1;i++){
-        printf("\n%s\t\t%d\n",rank.winner_name[i],rank.winner_score[i]);
+
+    if(true){
+        printf("\033[0;36m");
+        printf("\nTOP PLAYERS\n");
+        printf("\n\nPlayer name\tPlayer score\n");
+        for(int i=0;i<print_players;i++){
+            printf("\n%d - %s\t\t%d\n",i+1,rank.winner_name[i],rank.winner_score[i]);
+        }
+        printf("\033[0m");
     }
-    printf("\033[0m");
+    else{
+         for(int i=0;i<print_players;i++){
+            if(!strcmp(rank.winner_name[i], winner_name))
+            printf("\033[0;36m\n%s rank is => %d\n\033[0m",winner_name , i+1);
+        }
+    }
 }

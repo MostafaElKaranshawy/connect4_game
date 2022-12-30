@@ -2,12 +2,15 @@
 #include <stdlib.h>
 #include <string.h>
 #include "casting.h"
+
+// global variables.
 int bolean=0;
 int counter = 0;
 int turn = 0;
-int time_passed , time_min , time_sec;
+int time_passed = 0 , time_min , time_sec;
 
-
+char no_spaces[1024];
+// congiduration struct
 typedef struct {
     int width;
     int height;
@@ -19,19 +22,22 @@ int height;
 int width ;
 int highscores ;
 
+// functions declaration
+void remove_spaces(char s[]);
 void read_file(char s[]);
 int tag_input(char s[] ,char tag_open[], char tag_close[]);
+
+// functions implementations
 void configuration_func(){
     FILE* fp;
-    char s[2048];
+    char s[1024];
     int count_path_access = 0;
-
-    char path[2048];
+    char path[1024];
     strcpy(path ,"configuration.xml");
-
+    
     // Open XML file to read
     fp = fopen(path, "r");
-
+    
     if ( fp == NULL ){
         while(count_path_access < 3){
             printf("Can't open the XML file\n\nPlease Enter File Path : ");
@@ -40,7 +46,8 @@ void configuration_func(){
             if(!( fp == NULL )){
                 fread(s , sizeof(s), 1, fp);
                 fclose(fp);
-                read_file(s);
+                remove_spaces(s);
+                read_file(no_spaces);
                 break;
             }
             else if( fp == NULL && count_path_access == 2){
@@ -60,9 +67,12 @@ void configuration_func(){
         // read each lines of XML file
         fread(s , sizeof(s), 1, fp);
         fclose(fp);
-        read_file(s);
+        remove_spaces(s);
+        read_file(no_spaces);
     }
 }
+
+// check if there any missed parameter.
 void read_file(char s[] ){
     width = tag_input(s ,"<Width>" , "</Width>");
     if(width <=0){width = 7;}
@@ -74,6 +84,8 @@ void read_file(char s[] ){
     if(highscores <=0){highscores = 10;}
     configuration_elements.highscores = highscores;
 }
+
+// tag the parameters from tags.
 int tag_input(char s[] ,char tag_open[], char tag_close[]){
     char *open_tag = tag_open;
     char *close_tag = tag_close;
@@ -94,6 +106,18 @@ int tag_input(char s[] ,char tag_open[], char tag_close[]){
         }
         else {
             return -1;
+        }
+    }
+}
+
+// ignore spaces in the xml file 
+void remove_spaces(char s[]){
+    int m = 0 ;
+    for(int i = 0 ;i < strlen(s) ; i++){
+        if(s[i] == ' '){continue;}
+        else{
+            no_spaces[m] = s[i];
+            m++;
         }
     }
 }
